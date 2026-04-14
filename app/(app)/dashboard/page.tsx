@@ -46,7 +46,8 @@ export default function DashboardPage() {
               지금 플레이
             </Button>
           </CardContent>
-        </Card>section>
+        </Card>
+      </section>
 
       {/* 카테고리 그리드 */}
       <section className="space-y-4">

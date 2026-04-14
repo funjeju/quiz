@@ -2,6 +2,14 @@ export type AgeGroup = '10s' | '20s' | '30s' | '40s' | '50s+';
 export type Gender   = 'male' | 'female' | 'other';
 export type UserRole = 'user' | 'admin';
 
+export const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
+  '10s': '10대',
+  '20s': '20대',
+  '30s': '30대',
+  '40s': '40대',
+  '50s+': '50대 이상',
+};
+
 export interface UserProfile {
   uid:              string;
   email:            string;

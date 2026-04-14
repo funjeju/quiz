@@ -3,6 +3,7 @@ import { adminDb } from '@/lib/firebase/admin';
 import { generateAllAgeQuizzes } from '@/lib/ai/quiz-generator';
 import { QuizQuestion } from '@/types';
 import crypto from 'crypto';
+import { getPipelineConfig } from '@/lib/admin/config-service';
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
@@ -10,6 +11,12 @@ export async function GET(request: NextRequest) {
     if (process.env.NODE_ENV !== 'development') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+  }
+
+  // Autopilot check
+  const config = await getPipelineConfig();
+  if (!config.isAutoPilotEnabled) {
+    return NextResponse.json({ success: true, message: 'Skipped - AutoPilot disabled' });
   }
 
   try {
