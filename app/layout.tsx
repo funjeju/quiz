@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { AuthProvider } from "@/components/common/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${inter.className} bg-slate-50 text-slate-900`}>
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <BottomNav />
-        <Toaster position="top-center" />
+        <AuthProvider>
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <BottomNav />
+          <Toaster position="top-center" />
+        </AuthProvider>
       </body>
     </html>
   );

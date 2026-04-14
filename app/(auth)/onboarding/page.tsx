@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client';
@@ -39,15 +39,28 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    nickname: user?.displayName || '',
+    nickname: '',
     gender: '' as Gender,
     ageGroup: '' as AgeGroup,
     region: '',
   });
 
+  // 유저 정보가 로드되면 닉네임 초기값 설정
+  useEffect(() => {
+    if (user?.displayName && !formData.nickname) {
+      setFormData(prev => ({ ...prev, nickname: user.displayName }));
+    }
+  }, [user, formData.nickname]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    console.log('Submit started', { user, formData });
+    
+    if (!user) {
+      console.error('No user found in store');
+      toast.error('로그인 정보가 없습니다. 다시 로그인해주세요.');
+      return;
+    }
     if (!formData.nickname || !formData.gender || !formData.ageGroup || !formData.region) {
       toast.error('모든 항목을 입력해주세요.');
       return;
@@ -68,12 +81,14 @@ export default function OnboardingPage() {
       };
 
       await setDoc(userRef, updatedProfile);
+      console.log('Profile saved successfully');
+      
       setUser(updatedProfile as any);
       toast.success('반갑습니다! 프로필 설정이 완료되었습니다.');
       router.push('/dashboard');
-    } catch (error) {
-      console.error(error);
-      toast.error('프로필 저장 중 오류가 발생했습니다.');
+    } catch (error: any) {
+      console.error('Profile save error:', error);
+      toast.error(`저장 실패: ${error.message || '알 수 없는 오류'}`);
     } finally {
       setLoading(false);
     }
